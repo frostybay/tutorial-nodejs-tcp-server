@@ -66,11 +66,11 @@ const Server = function (port, address) {
 			this.connection.on('listening', callback);	
 		}
 
-		/*
-		 * Validade the client
-		 */
 	};
 
+	/*
+	 * An example function: Validating the client
+	 */
 	function validateClient(client)	 {
 		return client.isLocalhost();
 	}

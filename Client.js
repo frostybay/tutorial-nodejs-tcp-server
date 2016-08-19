@@ -1,8 +1,8 @@
-const Client = function (socket) {
-	this.address = socket.remoteAddress;
-	this.port 	 = socket.remotePort;
+const Client = function (c) {
+	this.address = c.remoteAddress;
+	this.port 	 = c.remotePort;
 	this.name 	 = this.address + ":" + this.port;
-	this.socket  = socket;
+	this.socket  = c;
 
 	this.receiveMessage = (message) => {
 		this.socket.write(message);
