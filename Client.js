@@ -1,16 +1,21 @@
-const Client = function (c) {
-	this.address = c.remoteAddress;
-	this.port 	 = c.remotePort;
-	this.name 	 = this.address + ":" + this.port;
-	this.socket  = c;
+'use strict';
 
-	this.receiveMessage = (message) => {
+class Client {
+	
+	constructor (socket) {
+		this.address = socket.remoteAddress;
+		this.port 	 = socket.remotePort;
+		this.name    = `${this.address}:${this.port}`;
+		this.socket  = socket;
+	}
+
+	receiveMessage (message) {
 		this.socket.write(message);
-	};
+	}
 
-	this.isLocalhost = () => {
+	isLocalhost () {
 		return this.address == "127.0.0.1" || this.address == "localhost";
-	};	
-};
+	}
+}
 
 module.exports = Client;

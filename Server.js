@@ -1,63 +1,73 @@
+'use strict';
+
 // Load the TCP Library
 const net = require('net');
 // importing Client class
 const Client = require('./Client');
 
-const Server = function (port, address) {
-	
-	// Currently connected clients
-	var clients = [];
+class Server {
 
-	this.port = port || 5000;
-	this.address = address || 'localhost';
+	constructor (port, address) {
 	
-	// Broadcast messages to the network
-	this.broadcast = (message, clientSender) => {
-		clients.forEach((client) => {
-			// Sender doesn't receive it's own message
-			if (clientSender != undefined && client === clientSender)
+		this.port = port || 5000;
+		this.address = address || '127.0.0.1';
+
+		// Array to hold our currently connected clients
+		this.clients = [];
+	}
+	
+	/*
+	 * Broadcasts messages to the network
+	 * The clientSender doesn't receive it's own message
+	*/
+	broadcast (message, clientSender) {
+		this.clients.forEach((client) => {
+			if (client === clientSender)
 				return;
 			client.receiveMessage(message);
 		});
 		console.log(message.replace(/\n+$/, ""));
-	};
+	}
 
-	this.start = function(callback) {
-
-		/*
-		 * Creating New Server
-		 * The callback get's called when a new client joins the server
-		*/ 
+	/*
+	 * Starting the server
+	 * The callback is executed when the server finally inits
+	*/ 
+	start (callback) {
+	
 		var server = this;
+		
 		this.connection = net.createServer((socket) => {
 			
 			var client = new Client(socket);
 
 			// Validation, if the client is valid
-			if (!validateClient(client)) {
+			if (!server._validateClient(client)) {
 				client.socket.destroy();
 				return;
 			}
 			// Broadcast the new connection
-			server.broadcast(client.name + " connected.\n", client);
+			server.broadcast(`${client.name} connected.\n`, client);
+			
 			// Storing client for later usage
-			clients.push(client);
+			server.clients.push(client);
 
 			// Triggered on message received by this client
 			socket.on('data', (data) => { 
 				// Broadcasting the message
-				server.broadcast(client.name + " -> " + data, client);
+				server.broadcast(`${client.name} says: ${data}`, client);
 			});
 			
 			// Triggered when this client disconnects
 			socket.on('end', () => {
 				// Removing the client from the list
-				clients.splice(clients.indexOf(client), 1);
+				server.clients.splice(server.clients.indexOf(client), 1);
 				// Broadcasting that this player left
-				server.broadcast(client.name + " disconnected.\n");
+				server.broadcast(`${client.name} disconnected.\n`);
 			});
 
 		});
+		
 		// starting the server
 		this.connection.listen(this.port, this.address);
 		
@@ -66,16 +76,14 @@ const Server = function (port, address) {
 			this.connection.on('listening', callback);	
 		}
 
-	};
+	}
 
 	/*
 	 * An example function: Validating the client
 	 */
-	function validateClient(client)	 {
+	_validateClient (client){
 		return client.isLocalhost();
 	}
-	
-	return this;
-};
+}
 
 module.exports = Server;
