@@ -10,16 +10,16 @@ const ADDRESS = '127.0.0.1';
 let server = net.createServer(onClientConnected);
 server.listen(PORT, ADDRESS);
 
-function onClientConnected(c) {
+function onClientConnected(socket) {
 
   // Giving a name to this client
-  let clientName = `${c.remoteAddress}:${c.remotePort}`;
+  let clientName = `${socket.remoteAddress}:${socket.remotePort}`;
 
   // Logging the message on the server
   console.log(`${clientName} connected.`);
 
   // Triggered on data received by this client
-  c.on('data', (data) => { 
+  socket.on('data', (data) => { 
 
     // getting the string message and also trimming
     // new line characters [\r or \n]
@@ -29,11 +29,11 @@ function onClientConnected(c) {
     console.log(`${clientName} said: ${m}`);
 
     // notifing the client
-    c.write(`We got your message (${m}). Thanks!\n`);
+    socket.write(`We got your message (${m}). Thanks!\n`);
   });
   
   // Triggered when this client disconnects
-  c.on('end', () => {
+  socket.on('end', () => {
     // Logging this message on the server
     console.log(`${clientName} disconnected.`);
   });

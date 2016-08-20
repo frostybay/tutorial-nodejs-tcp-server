@@ -10,9 +10,9 @@ const ADDRESS = '127.0.0.1';
 let server = net.createServer(onClientConnected);
 server.listen(PORT, ADDRESS);
 
-function onClientConnected(c) {
-  console.log(`New client: ${c.remoteAddress}:${c.remotePort}`);
-  c.destroy();
+function onClientConnected(socket) {
+  console.log(`New client: ${socket.remoteAddress}:${socket.remotePort}`);
+  socket.destroy();
 }
 
 console.log(`Server started at: ${ADDRESS}:${PORT}`);
