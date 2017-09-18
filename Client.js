@@ -12,6 +12,10 @@ class Client {
 	receiveMessage (message) {
 		this.socket.write(message);
 	}
+	
+	isLocalHost() {
+		return this.address === 'localhost';
+	}
 
 }
 module.exports = Client;
