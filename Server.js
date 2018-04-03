@@ -82,7 +82,7 @@ class Server {
 	 * An example function: Validating the client
 	 */
 	_validateClient (client){
-		return client.isLocalhost();
+		return client.isLocalHost();
 	}
 }
 
